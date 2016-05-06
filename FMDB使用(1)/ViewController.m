@@ -21,7 +21,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    [self createDB];
+//    [self createDB];
+    [self openDb];
+
 
 }
 
@@ -33,31 +35,46 @@
     _queue = [FMDatabaseQueue databaseQueueWithPath:_dbPath];
     if ([db open]) {
         NSLog(@"打开成功"); //blob 二进制
-        
+        [_queue inDatabase:^(FMDatabase *db) {
+            if ([db open]) {
+                BOOL issucess = [db executeUpdate:@"CREATE TABLE FXJList (id integer primary key autoincrement not null,Name text, Age integer, Sex integer, Phone text, Address text, Photo blob)"];
+                if (issucess) {
+                    NSLog(@"创建成功1");
+                }
+                
+                //            BOOL issucess2 = [db executeUpdate:@"CREATE TABLE FXJ2List (id integer primary key autoincrement not null,Name text, Age integer, Sex integer, Phone text, Address text, Photo blob)"];
+                //            if (issucess2) {
+                //                NSLog(@"创建成功2");
+                //            }
+            }
+            [db close];
+        }];
+        [_queue close];
+
     }else{
         NSLog(@"打开失败");
     }
     
 }
 
-- (void)createDB{
-    [self openDb];
-    [_queue inDatabase:^(FMDatabase *db) {
-        if ([db open]) {
-            BOOL issucess = [db executeUpdate:@"CREATE TABLE FXJList (id integer primary key autoincrement not null,Name text, Age integer, Sex integer, Phone text, Address text, Photo blob)"];
-            if (issucess) {
-                NSLog(@"创建成功1");
-            }
-            
-//            BOOL issucess2 = [db executeUpdate:@"CREATE TABLE FXJ2List (id integer primary key autoincrement not null,Name text, Age integer, Sex integer, Phone text, Address text, Photo blob)"];
-//            if (issucess2) {
-//                NSLog(@"创建成功2");
+//- (void)createDB{
+//    [self openDb];
+//    [_queue inDatabase:^(FMDatabase *db) {
+//        if ([db open]) {
+//            BOOL issucess = [db executeUpdate:@"CREATE TABLE FXJList (id integer primary key autoincrement not null,Name text, Age integer, Sex integer, Phone text, Address text, Photo blob)"];
+//            if (issucess) {
+//                NSLog(@"创建成功1");
 //            }
-        }
-        [db close];
-    }];
-    [_queue close];
-}
+//            
+////            BOOL issucess2 = [db executeUpdate:@"CREATE TABLE FXJ2List (id integer primary key autoincrement not null,Name text, Age integer, Sex integer, Phone text, Address text, Photo blob)"];
+////            if (issucess2) {
+////                NSLog(@"创建成功2");
+////            }
+//        }
+//        [db close];
+//    }];
+//    [_queue close];
+//}
 
 - (IBAction)insertData {
     
@@ -94,18 +111,18 @@
     [_queue close];
 }
 - (IBAction)updata {
-    
-    [self.queue inDatabase:^(FMDatabase *db) {
-        if ([db open]) {
-            BOOL issucess =  [db executeUpdate:@"update FXJList SET Age = ? WHERE Name = ?",[NSNumber numberWithInt:30],@"fxj-3"];
-            if (issucess) {
-                NSLog(@"更新成功");
-            }
-        }
-        [db close];
-    }];
-    [_queue close];
- 
+//    
+//    [self.queue inDatabase:^(FMDatabase *db) {
+//        if ([db open]) {
+//            BOOL issucess =  [db executeUpdate:@"update FXJList SET Age = ? WHERE Name = ?",[NSNumber numberWithInt:30],@"fxj-3"];
+//            if (issucess) {
+//                NSLog(@"更新成功");
+//            }
+//        }
+//        [db close];
+//    }];
+//    [_queue close];
+//
     
 //    [self openDb];
 //     [self.queue inDatabase:^(FMDatabase *db) {
@@ -120,28 +137,25 @@
 //    [_queue close];
 //    [_db close];
     
- 
     // 如果要支持事务
-    
-   
     __block BOOL whoopsSomethingWrongHappened = true;
     [_queue inTransaction:^(FMDatabase *db, BOOL *rollback) {
-        
-        if ([db open]) {
-            whoopsSomethingWrongHappened &=  [db executeUpdate:@"update FXJList SET Age = ? WHERE Name = ?", @(3),@"fxj-3"];
+                
+            whoopsSomethingWrongHappened &=  [db executeUpdate:@"update FXJList SET Age = ? WHERE Name = ?", @(34),@"fxj-3"];
             
-            whoopsSomethingWrongHappened &=  [db executeUpdate:@"update FXJList SET Age = ? WHERE Name = ?", @(3),@"fxj-4"];
+            whoopsSomethingWrongHappened &=  [db executeUpdate:@"update FXJList SET Age = ? WHERE Name = ?", @(34),@"fxj-4"];
             
-            whoopsSomethingWrongHappened &=  [db executeUpdate:@"update FXJList SET value = ? WHERE Name = ?", @(3),@"fxj-5"];
+            whoopsSomethingWrongHappened &=  [db executeUpdate:@"update FXJList SET Age = ? WHERE Name = ?", @(34),@"fxj-5"];
             
             if (!whoopsSomethingWrongHappened) {
                 
                 *rollback = YES;
                 
                 return;
+            }else{
+                NSLog(@"事务修改成功");
+            
             }
-        }
-        [db close];
     }];
     [_queue close];
     
@@ -175,17 +189,19 @@
     [self.queue inDatabase:^(FMDatabase *db) {
         if ([db open]) {
             // 1.查询
-            FMResultSet *set = [db  executeQuery:@"SELECT * FROM FXJList"];
             NSString *address = [db stringForQuery:@"SELECT Address FROM FXJList WHERE Name = ?",@"fxj-99"];
             int age = [db intForQuery:@"SELECT Age FROM FXJList WHERE Name = ?",@"fxj-6"];
             NSLog(@"1age = %d address = %@",age,address);
-            // 2.取出数据
-            while ([set next]) {
-                
-                NSString *name = [set stringForColumn:@"Name"];
-                int age = [set intForColumn:@"Age"];
-                NSLog(@"name = %@, age = %d", name, age);
-            }
+            
+                     
+//            FMResultSet *set = [db  executeQuery:@"SELECT * FROM FXJList"];
+//            // 2.取出数据
+//            while ([set next]) {
+//                
+//                NSString *name = [set stringForColumn:@"Name"];
+//                int age = [set intForColumn:@"Age"];
+//                NSLog(@"name = %@, age = %d", name, age);
+//            }
         }
         [db close];
     }];
@@ -217,9 +233,37 @@
  
 }
 
+//模糊查询
+- (IBAction)blurSselect{
+    
+    [self.queue inDatabase:^(FMDatabase *db) {
+        if ([db open]) {
+            
+            NSString *sql = [NSString stringWithFormat:@"SELECT * FROM FXJList WHERE Name like '%%%@%%' ORDER BY Age ASC;",@"9"];//模糊查询，查询Name中包含 @"9" 的内容  用年龄顺序排序
+            FMResultSet *setmohu = [db executeQuery:sql];
+            while ([setmohu next]) {
+                
+                NSString *name = [setmohu stringForColumn:@"Name"];
+                int age = [setmohu intForColumn:@"Age"];
+                NSLog(@"name = %@, age = %d", name, age);
+            }
+        
+        }
+        [db close];
+    }];
+    [_queue close];
+
+
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+- (IBAction)refreshQueue {
+    NSString *docPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+    _dbPath = [docPath stringByAppendingPathComponent:@"MyDatabase.db"];
+    _queue = [FMDatabaseQueue databaseQueueWithPath:_dbPath];
+    
 }
 
 @end

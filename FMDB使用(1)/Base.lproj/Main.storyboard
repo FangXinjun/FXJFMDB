@@ -45,8 +45,22 @@
                                     <action selector="insertData" destination="BYZ-38-t0r" eventType="touchUpInside" id="vXK-pA-8Q0"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oz6-fJ-fR8">
+                                <rect key="frame" x="84" y="456" width="96" height="30"/>
+                                <state key="normal" title="refresh queue"/>
+                                <connections>
+                                    <action selector="refreshQueue" destination="BYZ-38-t0r" eventType="touchUpInside" id="SIH-zE-fyI"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1vu-p2-GnA">
+                                <rect key="frame" x="99" y="418" width="60" height="30"/>
+                                <state key="normal" title="模糊查询"/>
+                                <connections>
+                                    <action selector="blurSselect" destination="BYZ-38-t0r" eventType="touchUpInside" id="Uch-2F-3ju"/>
+                                </connections>
+                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AI6-G1-Qgo">
-                                <rect key="frame" x="114" y="396" width="30" height="30"/>
+                                <rect key="frame" x="117" y="368" width="30" height="30"/>
                                 <state key="normal" title="销毁"/>
                                 <connections>
                                     <action selector="dropTable" destination="BYZ-38-t0r" eventType="touchUpInside" id="dKd-3w-voy"/>
